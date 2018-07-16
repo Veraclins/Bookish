@@ -4,7 +4,10 @@
   "description": "An API for book lovers",
   "main": "app.js",
   "scripts": {
-    "test": "mocha"
+    "start": "babel-node app.js --presets babel-preset-env",
+    "dev": "nodemon app.js --exec babel-node --presets babel-preset-env",
+    "test": "cross-env NODE_ENV=test nyc mocha",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -17,9 +20,16 @@
   },
   "homepage": "https://github.com/Veraclins/Bookish#readme",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
     "body-parser": "^1.18.3",
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
     "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
     "express": "^4.16.3",
+    "mocha": "^5.1.1",
+    "morgan": "^1.9.0",
     "pg": "^7.4.3",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.38.0",
@@ -27,12 +37,32 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-plugin-istanbul": "^4.1.6",
+    "coveralls": "^3.0.1",
+    "cross-env": "^5.1.5",
     "babel-preset-env": "^1.7.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^17.0.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-react": "^7.10.0"
+    "eslint-plugin-react": "^7.10.0",
+    "nodemon": "^1.17.4",
+    "nyc": "^11.8.0"
+  },
+  "engines": {
+    "node": "8.7.0"
+  },
+  "nyc": {
+    "require": [
+      "babel-register",
+      "babel-polyfill"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "sourceMap": false,
+    "instrument": false
   }
 }
