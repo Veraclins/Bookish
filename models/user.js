@@ -12,14 +12,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    strategyType: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    strategyId: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
   }, {});
   User.associate = (models) => {
     User.hasMany(models.Book, {
