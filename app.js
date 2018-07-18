@@ -34,8 +34,12 @@ app.use(cors());
 app.use('/', router);
 
 
+<<<<<<< HEAD
 app.use(passport.initialize());
 
+=======
+app.use('/api/v1', routes);
+>>>>>>> work in progress
 app.all('/', (req, res) => {
   res.send({
     status: 'success',

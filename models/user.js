@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Must be a valid email address',
         },
       },
-      unique:true,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = (models) => {
     User.hasMany(models.Book, {
       foreignKey: 'userId',
-      as: 'books',
     });
   };
   return User;

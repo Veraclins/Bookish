@@ -27,7 +27,10 @@ export default (sequelize, DataTypes) => {
   }, {});
   Book.associate = (models) => {
     Book.belongsTo(models.User, {
-      foreignKey: 'userId',
+      foreignKey: {
+        name: 'userId',
+        allowNull: false,
+      },
       onDelete: 'CASCADE',
     });
   };

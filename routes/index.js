@@ -21,3 +21,12 @@ router.all('/*', (req, res) => {
 });
 
 export default router;
+import booksRouter from './books';
+import usersRouter from './users';
+
+const routes = Router();
+
+routes.use('/books', booksRouter);
+routes.use('/users', usersRouter);
+
+export default routes;
