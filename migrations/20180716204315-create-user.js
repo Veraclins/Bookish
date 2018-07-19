@@ -13,6 +13,7 @@ module.exports = {
     email: {
       type: Sequelize.STRING,
       allowNull: false,
+      unique: true,
     },
     password: {
       type: Sequelize.STRING,
@@ -21,10 +22,13 @@ module.exports = {
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW
+
     },
     updatedAt: {
       allowNull: false,
       type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW
     },
   }),
   down: (queryInterface/* , Sequelize */) => { queryInterface.dropTable('Users'); },
