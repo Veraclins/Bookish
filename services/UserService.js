@@ -15,7 +15,7 @@ export default class UserService {
    * done function and passed to this method argument. It is called when the data has been
    * processed successfully
    */
-  static createOrGetUserFromProvider(user, done) {
+  static getOrCreateUserFromProviders(req, res) {
     User.findOrCreate({
       where: {
         email: user.email,

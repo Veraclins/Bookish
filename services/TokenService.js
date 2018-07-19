@@ -9,8 +9,11 @@ export default class TokenService {
    * @param {object} payload  the user to be created
    * @param {*} callback called after the user has been successully decoded
    */
-  static createToken(payload, callback) {
-    jwt.sign(payload, process.env.TOKEN_SECRET, callback);
+  static createToken(user) {
+    const token = jwt.sign(user, process.env.TOKEN_SECRET, {
+      expiresIn: 259200, // expires in 72 hours
+    });
+    return token;
   }
 
 

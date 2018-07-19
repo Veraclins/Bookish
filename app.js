@@ -2,24 +2,13 @@ import {} from 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import logger from 'morgan';
-import passport from 'passport';
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import router from './routes';
-import authRouter from './routes/v1/authRouter';
 import passportConfig from './config/passportConfig';
-
-import passport from 'passport';
-import authRoutes from './routes/auth';
-
-require('./config/passport');
 
 const app = express();
 const { PORT = 3000 } = process.env;
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use(session({ secret: 'I love Myself' }));
 
 passportConfig(app);
 app.use(session({ secret: process.env.SESSION_SECRET }));
@@ -32,20 +21,9 @@ app.use(logger(app.get('env') === 'production' ? 'combined' : 'dev', {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+
+// route handler
 app.use('/', router);
-
-
-app.use(passport.initialize());
-
-app.all('/', (req, res) => {
-  res.send({
-    status: 'success',
-    data: 'Welcome to Bookish, An API for book lovers',
-  });
-});
-
-app.use('/api/v1/auth/facebook', authRouter);
-app.use('/api/v1/auth', authRoutes);
 
 /* eslint-disable no-console */
 app.listen(PORT, (err) => {
