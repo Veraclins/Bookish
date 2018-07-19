@@ -3,9 +3,16 @@ import express from 'express';
 import cors from 'cors';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
+import session from 'express-session';
+import router from './routes';
+import passportConfig from './config/passportConfig';
+
 
 const app = express();
 const { PORT = 3000 } = process.env;
+
+passportConfig(app);
+app.use(session({ secret: process.env.SESSION_SECRET }));
 
 // Middlewares
 app.use(logger(app.get('env') === 'production' ? 'combined' : 'dev', {
@@ -14,18 +21,15 @@ app.use(logger(app.get('env') === 'production' ? 'combined' : 'dev', {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+app.use('/', router);
 
-
-app.all('/', (req, res) => {
-  res.send({
-    status: 'success',
-    data: 'Welcome to Bookish, An API for book lovers',
-  });
-});
 
 /* eslint-disable no-console */
-export const server = app.listen(PORT, () => {
-  if (app.get('env') === 'development') console.log(`The server is live on port ${PORT}`);
+app.listen(PORT, (err) => {
+  if (!err) console.log(`The server is live on port ${PORT}`);
+  else {
+    console.log(`An error occured while binding to port${PORT}`);
+  }
 });
 
 export default app;
