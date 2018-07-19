@@ -1,5 +1,10 @@
 import { Book } from '../models/index'; // eslint-disable-line 
 
+const internalError = {
+  status: 'error',
+  message: 'Something went wrong internally. Please try again',
+};
+
 /**
  * BooksInController is responsible
  * for the logic of performing CRUD operations on the Book resource.
@@ -14,6 +19,7 @@ export default class BooksController {
    * @param {object} res the response object
    * @return {Object} user res the response object
    */
+
   static createBook(req, res) {
     const newBook = {
       title: req.body.title,
@@ -29,10 +35,7 @@ export default class BooksController {
         status: 'success',
         data: book.toJSON(),
       }))
-      .catch(err => res.status(400).send({
-        status: 'error',
-        message: err.message,
-      }));
+      .catch(() => res.status(500).send(internalError));
   }
 
   static getAllBooks(req, res) {
@@ -41,10 +44,7 @@ export default class BooksController {
         status: 'success',
         data: books,
       }))
-      .catch(err => res.status(400).send({
-        status: 'error',
-        message: err.message,
-      }));
+      .catch(() => res.status(500).send(internalError));
   }
 
   static updatateBook(req, res) {
@@ -58,7 +58,7 @@ export default class BooksController {
       publicationYear: req.body.publicationYear,
       userId: req.body.userId,
     };
-    Book.update(newDetails, { returning: true, where: { id: bookId } })
+    Book.update(newDetails, { returning: true, where: { ids: bookId } })
       .then((value) => {
         const book = value[1][0];
         if (book) {
@@ -73,10 +73,7 @@ export default class BooksController {
           });
         }
       })
-      .catch(err => res.status(400).send({
-        status: 'error',
-        message: err.message,
-      }));
+      .catch(() => res.status(500).send(internalError));
   }
 
   static getOneBook(req, res) {
@@ -95,12 +92,7 @@ export default class BooksController {
           });
         }
       })
-      .catch((err) => {
-        res.status(400).send({
-          status: 'error',
-          message: err.message,
-        });
-      });
+      .catch(() => res.status(500).send(internalError));
   }
 
   static deleteBook(req, res) {
@@ -119,11 +111,6 @@ export default class BooksController {
           });
         }
       })
-      .catch((err) => {
-        res.status(400).send({
-          status: 'error',
-          message: err.message,
-        });
-      });
+      .catch(() => res.status(500).send(internalError));
   }
 }
