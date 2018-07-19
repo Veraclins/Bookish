@@ -6,6 +6,7 @@ import passport from 'passport';
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import router from './routes';
+import authRouter from './routes/v1/authRouter';
 import passportConfig from './config/passportConfig';
 
 import passport from 'passport';
@@ -43,6 +44,7 @@ app.all('/', (req, res) => {
   });
 });
 
+app.use('/api/v1/auth/facebook', authRouter);
 app.use('/api/v1/auth', authRoutes);
 
 /* eslint-disable no-console */

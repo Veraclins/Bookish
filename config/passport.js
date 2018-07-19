@@ -1,5 +1,6 @@
 import passport from 'passport';
 import local from 'passport-local';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
 import bcrypt from 'bcrypt';
 import GoogleStrategy from 'passport-google-oauth20';
 import db from '../models';
@@ -69,3 +70,19 @@ passport.use('signup', new LocalStrategy({
     })
     .catch(err => done(err));
 }));
+
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+    profileFields: ['id', 'displayName', 'emails'],
+  },
+
+  function(accessToken, refreshToken, profile, done) {
+    const { id, name, email} = profile._json;
+    
+    console.log(id);
+      done(null, { id, name, email });
+}
+));
+
