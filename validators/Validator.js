@@ -31,10 +31,31 @@ export default class Validator {
     return input;
   }
 
+
+  static validateUser(req, res, next) {
+    const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/; // eslint-disable-line no-useless-escape
+    const paraRegex = /[A-Za-z0-9\s_.,!"()?@'/$]*/;
+    const errors = {};
+    // Checks that all fields are present
+    const field = ['name', 'email', 'password', 'confirmPassword'];
+    const request = Validator.required(req, res, field);
+    if (!request) return;
+    const {
+      name, email, password, confirmPassword,
+    } = request;
+
+    // Validate each field
+    if (name.length < 3 || !paraRegex.test(name)) errors.name = 'must be string or phrase and at least 3 characters';
+    if (!emailRegex.test(email)) errors.email = 'must be a valid email';
+    if (password.length < 6) errors.password = 'must be at least six characters';
+    if (password !== confirmPassword) errors.confirmPassword = 'must match password';
+    Validator.handleErrors(errors, res, next);
+  }
+
   static validateBook(req, res, next) {
     const yearRegex = /[0-9]{4}/;
     const paraRegex = /[A-Za-z0-9\s_.,!"()?@'/$]*/;
-    const urlRegex = /^https?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)*\/?$/;
+    const urlRegex = /^https?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)*\/?$/; // eslint-disable-line no-useless-escape
     const errors = {};
     // Checks that all fields are present
     const field = ['title', 'category', 'description', 'author', 'coverUrl', 'publicationYear'];
