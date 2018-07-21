@@ -5,8 +5,7 @@ const router = Router();
 
 router.use('/api/v1', apiV1Router);
 
-
-router.get('/', (req, res) => {
+router.get('/*', (req, res) => {
   res.status(200).json({
     status: 'success',
     message: 'Welcome to Bookish, An API for book lovers',

@@ -1,3 +1,4 @@
+
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Books', {
     id: {
@@ -5,6 +6,17 @@ module.exports = {
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER,
+    },
+    user_id: {
+      type: Sequelize.INTEGER,
+
+      references: {
+        // This is a reference to another model
+        model: 'Users',
+
+        // This is the column name of the referenced model
+        key: 'id',
+      },
     },
     title: {
       type: Sequelize.STRING,

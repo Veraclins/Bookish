@@ -1,68 +1,50 @@
 import { } from 'dotenv/config';
-import jwt from 'jsonwebtoken';
-import passport from 'passport';
+import bcrypt from 'bcrypt';
 import { User } from '../models/index'; //eslint-disable-line
 import TokenService from '../services/TokenService';
 
 export default class AuthController {
-  static findOrCreateUser(req, res) {
-    const { user } = req;
+  static sendResponse(req, res) {
+    const tokenData = {
+      id: newOrFoundUser.id,
+    };
+    const token = TokenService.createToken(tokenData);
+    const { id, email, name } = newOrFoundUser;
+    const userWithToken = {
+      id,
+      email,
+      name,
+      token,
+    };
+    res.status(201).send({
+      status: 'success',
+      data: userWithToken,
+    });
+  }
+
+  static socialLogin(userInfo, done) {
     User.findOrCreate({
       where: {
-        email: user.email,
+        email: userInfo.email,
       },
-      defaults: user,
-      attributes: ['email'],
-    }).spread(({ dataValues: newOrFoundUser }) => {
-      const tokenData = {
-        id: newOrFoundUser.id,
-      };
-      const token = TokenService.createToken(tokenData);
-      const { id, email, name } = newOrFoundUser;
-      const userWithToken = {
+      defaults: userInfo,
+    }).spread((newOrFoundUser, created) => {
+      if (!newOrFoundUser) return done(null, false);
+      const { id, email, name } = newOrFoundUser.dataValues;
+      return done(null, {
         id,
         email,
         name,
-        token,
-      };
-      res.status(201).send({
-        status: 'success',
-        data: userWithToken,
+        created,
       });
     });
   }
 
-  static login(req, res) {
-    passport.authenticate('login', { session: false }, (err, user) => {
-      if (err || !user) {
-        return res.status(400).json({
-          message: 'Username or password incorrect',
-        });
-      }
-      req.login(user, { session: false }, (error) => {
-        if (error) {
-          res.send(error);
-        }
-        const token = jwt.sign(user, 'thissecret');
-        return res.status(200).json({ user, token });
-      });
-      return null;
-    })(req, res);
-  }
-
-  static signup(req, res) {
-    passport.authenticate('signup', { session: false }, (err, user) => {
-      if (err || !user) {
-        return res.status(400).json({
-          message: 'Account already exists',
-        });
-      }
-      // if (!user) return res.status(400).json({ message: 'User can not be found' });
-      const token = jwt.sign({ id: user.id }, 'thissecret', { expiresIn: 86400 });
-      return res.status(201).json({ user, token });
-    })(req, res);
-  }
-
+  /*
+  * This function is responsible for login in a user through the passport local
+  * authentication strategy.
+  * @params email
+  */
   static localLoginCallback(email, password, done) {
     User.findOne({ where: { email } })
       .then((user) => {
@@ -74,6 +56,7 @@ export default class AuthController {
           id: user.dataValues.id,
           name: user.dataValues.name,
           email: user.dataValues.email,
+          created: false,
         });
       })
       .catch(err => done(err));
@@ -83,7 +66,7 @@ export default class AuthController {
     User.findOne({ where: { email } })
       .then((result) => {
         if (result) {
-          return done(null, false, { message: 'Account already exists' });
+          return done(null, false);
         }
         const hashedPassword = bcrypt.hashSync(password, 8);
         User.create({
@@ -93,13 +76,14 @@ export default class AuthController {
         })
           .then((user) => {
             if (!user) {
-              return done(null, false, { message: 'Something is not right' });
+              return done(null, false);
             }
             return done(null, {
               id: user.dataValues.id,
               name: user.dataValues.name,
               email: user.dataValues.email,
-            }, { message: 'Account created successfully' });
+              created: true,
+            });
           })
           .catch(err => done(err));
         return null;
@@ -109,36 +93,36 @@ export default class AuthController {
 
   static linkedInCallback(token, tokenSecret, profile, done) {
     const { displayName, _json: { emailAddress } } = profile;
-    const user = {
+    const userInfo = {
       name: displayName,
       email: emailAddress,
     };
-    done(null, user);
+    AuthController.socialLogin(userInfo, done);
   }
 
   static googleCallback(acessToken, refreshToken, profile, done) {
-    const user = {
+    const userInfo = {
       name: profile.displayName,
       email: profile.emails[0].value,
     };
-    done(null, user);
+    AuthController.socialLogin(userInfo, done);
   }
 
   static facebookCallback(accessToken, refreshToken, profile, done) {
     const { name, email } = profile._json; // eslint-disable-line
-    const user = {
+    const userInfo = {
       name,
       email,
     };
-    done(null, user);
+    AuthController.socialLogin(userInfo, done);
   }
 
   static githubCallback(token, tokenSecret, profile, done) {
     const { displayName, _json: { emailAddress } } = profile;
-    const user = {
+    const userInfo = {
       name: displayName,
       email: emailAddress,
     };
-    done(null, user);
+    AuthController.socialLogin(userInfo, done);
   }
 }
