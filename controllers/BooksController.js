@@ -17,7 +17,6 @@ export default class BooksController {
    * and returns it.
    * @param {object} req the request object
    * @param {object} res the response object
-   * @return {Object} user res the response object
    */
 
   static createBook(req, res) {

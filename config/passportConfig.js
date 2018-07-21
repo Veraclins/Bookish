@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as LinkedInStrategy } from 'passport-linkedin';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Strategy as GitHubStrategy } from 'passport-github';
 import local from 'passport-local';
 import GoogleStrategy from 'passport-google-oauth20';
 import AuthController from '../controllers/AuthController';
@@ -38,6 +39,12 @@ export default function runConfig(app) {
     callbackURL: process.env.FACEBOOK_CALLBACK_URL,
     profileFields: ['id', 'displayName', 'emails'],
   }, AuthController.facebookCallback));
+
+  passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: 'http://127.0.0.1:3000/api/v1/auth/github/callback',
+  }, AuthController.githubCallback));
 
   passport.use('login', new LocalStrategy({
     usernameField: 'email',
