@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => {
+export default (sequelize, DataTypes) => {
   const Book = sequelize.define('Book', {
     title: {
       type: DataTypes.STRING,
@@ -27,7 +27,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Book.associate = (models) => {
     Book.belongsTo(models.User, {
-      foreignKey: 'userId',
+      foreignKey: {
+        name: 'userId',
+        allowNull: false,
+      },
       onDelete: 'CASCADE',
     });
   };
