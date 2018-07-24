@@ -48,6 +48,7 @@ export default class AuthController {
   * @param {*} done the callback function that completes passport auth and attach
   * the user object to the request
   */
+
   static finishSignup(userInfo, done) {
     User.findOrCreate({
       where: {
@@ -106,7 +107,9 @@ export default class AuthController {
       email,
       password,
     };
+    
     AuthController.finishSignup(userInfo, done);
+
     // User.findOne({ where: { email } })
     //   .then((result) => {
     //     if (result) {

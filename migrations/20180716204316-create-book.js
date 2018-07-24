@@ -45,11 +45,21 @@ module.exports = {
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW
     },
     updatedAt: {
       allowNull: false,
       type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW
     },
+    userId: {
+      allowNull:false,
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'Users',
+        key: 'id'
+      }
+    }
   }),
   down: (queryInterface/* , Sequelize */) => { queryInterface.dropTable('Books'); },
 };
