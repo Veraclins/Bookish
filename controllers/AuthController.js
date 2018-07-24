@@ -48,7 +48,8 @@ export default class AuthController {
   * @param {*} done the callback function that completes passport auth and attach
   * the user object to the request
   */
-  static socialLogin(userInfo, done) {
+
+  static finishSignup(userInfo, done) {
     User.findOrCreate({
       where: {
         email: userInfo.email,
@@ -106,7 +107,9 @@ export default class AuthController {
       email,
       password,
     };
-    AuthController.socialLogin(userInfo, done);
+    
+    AuthController.finishSignup(userInfo, done);
+
     // User.findOne({ where: { email } })
     //   .then((result) => {
     //     if (result) {
@@ -148,7 +151,7 @@ export default class AuthController {
       name: displayName,
       email: emailAddress,
     };
-    AuthController.socialLogin(userInfo, done);
+    AuthController.finishSignup(userInfo, done);
   }
 
   /**
@@ -166,7 +169,7 @@ export default class AuthController {
       name: profile.displayName,
       email: profile.emails[0].value,
     };
-    AuthController.socialLogin(userInfo, done);
+    AuthController.finishSignup(userInfo, done);
   }
 
   /**
@@ -185,7 +188,7 @@ export default class AuthController {
       name,
       email,
     };
-    AuthController.socialLogin(userInfo, done);
+    AuthController.finishSignup(userInfo, done);
   }
 
   /**
@@ -205,6 +208,6 @@ export default class AuthController {
       name: username,
       email,
     };
-    AuthController.socialLogin(userInfo, done);
+    AuthController.finishSignup(userInfo, done);
   }
 }
